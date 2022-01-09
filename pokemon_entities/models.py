@@ -8,7 +8,6 @@ class Pokemon(models.Model):
                               null=True,
                               verbose_name="Картинка")
     description = models.TextField(default="Описание",
-                                   null=True,
                                    blank=True,
                                    verbose_name="Описание")
     title_en = models.CharField(default=None,
@@ -40,11 +39,13 @@ class PokemonEntity(models.Model):
                                 default=None,
                                 verbose_name="Покемон"
                                 )
-    lat = models.FloatField()
-    lon = models.FloatField()
+    lat = models.FloatField(verbose_name="Широта")
+    lon = models.FloatField(verbose_name="Долгота")
     appeared_at = models.DateTimeField(default=None,
+                                       blank=True,
                                        verbose_name="Появился")
     disappeared_at = models.DateTimeField(default=None,
+                                          blank=True,
                                           verbose_name="Исчезнет")
     level = models.PositiveIntegerField(default=1,
                                         verbose_name="Уровень")
