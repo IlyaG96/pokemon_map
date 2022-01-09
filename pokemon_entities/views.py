@@ -27,17 +27,19 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 
 def show_all_pokemons(request):
-    pokemons = Pokemon.objects.all()
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
+
+    pokemons = Pokemon.objects.all()
     for pokemon in pokemons:
-        pokemon_entity = PokemonEntity.objects.get(id=pokemon.id)
-        add_pokemon(
-                folium_map,
-                pokemon_entity.lat,
-                pokemon_entity.lon,
-                request.build_absolute_uri(pokemon.image.url)
-            )
+        pokemon_entity = PokemonEntity.objects.filter(pokemon=pokemon)
+        for entity in pokemon_entity:
+            add_pokemon(
+                    folium_map,
+                    entity.lat,
+                    entity.lon,
+                    request.build_absolute_uri(pokemon.image.url)
+                )
 
     pokemons_on_page = []
     for pokemon in pokemons:
@@ -54,22 +56,24 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    with open('pokemon_entities/pokemons.json', encoding='utf-8') as database:
-        pokemons = json.load(database)['pokemons']
 
+    pokemons = Pokemon.objects.all()
     for pokemon in pokemons:
-        if pokemon['pokemon_id'] == int(pokemon_id):
+        if pokemon.id == int(pokemon_id):
             requested_pokemon = pokemon
             break
     else:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in requested_pokemon['entities']:
+    pokemon_entities = PokemonEntity.objects.filter(pokemon=pokemon)
+
+    for entity in pokemon_entities:
         add_pokemon(
-            folium_map, pokemon_entity['lat'],
-            pokemon_entity['lon'],
-            pokemon['img_url']
+            folium_map,
+            entity.lat,
+            entity.lon,
+            request.build_absolute_uri(pokemon.image.url)
         )
 
     return render(request, 'pokemon.html', context={
