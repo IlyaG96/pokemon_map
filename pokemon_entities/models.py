@@ -25,5 +25,8 @@ class PokemonEntity(models.Model):
     defence = models.PositiveIntegerField(default=0)
     stamina = models.PositiveIntegerField(default=1)
 
+    def __str__(self):
+        return f"{self.id} {self.pokemon}"
+
 
 
