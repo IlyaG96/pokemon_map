@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200)
+    title_ru = models.CharField(max_length=200)
     image = models.ImageField(blank=True, null=True)
     description = models.TextField(default="Описание", null=True)
     title_en = models.CharField(default="На английском", max_length=200)
@@ -10,10 +10,11 @@ class Pokemon(models.Model):
     previous_evolution = models.ForeignKey("self",
                                            on_delete=models.SET_NULL,
                                            default=None,
-                                           null=True)
+                                           null=True,
+                                           related_name="next_evolution")
 
     def __str__(self):
-        return self.title
+        return self.title_ru
 
     class Meta:
         verbose_name = "Pokemon"
