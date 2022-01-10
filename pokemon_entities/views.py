@@ -37,9 +37,8 @@ def show_all_pokemons(request):
 
     pokemons = Pokemon.objects.all().only("image", "id", "title_ru")
     for pokemon in pokemons:
-        pokemon_entity = \
-            PokemonEntity.objects.filter(pokemon=pokemon).only("lat", "lon")
-        for entity in pokemon_entity:
+        pokemon_entities = pokemon.pokemon_entity.only("lat", "lon")
+        for entity in pokemon_entities:
             add_pokemon(
                     folium_map,
                     entity.lat,
