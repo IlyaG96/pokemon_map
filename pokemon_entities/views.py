@@ -63,11 +63,9 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
 
     pokemons = Pokemon.objects.all()
-    for pokemon in pokemons:
-        if pokemon.id == int(pokemon_id):
-            requested_pokemon = pokemon
-            break
-    else:
+    try:
+        requested_pokemon = pokemons.get(id=pokemon_id)
+    except Pokemon.DoesNotExist:
         return HttpResponseNotFound("<h1>Такой покемон не найден</h1>")
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
@@ -78,7 +76,7 @@ def show_pokemon(request, pokemon_id):
             folium_map,
             entity.lat,
             entity.lon,
-            make_abs_uri(request, pokemon)
+            make_abs_uri(request, requested_pokemon)
         )
 
     pokemon = {
