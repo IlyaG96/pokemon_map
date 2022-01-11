@@ -35,7 +35,7 @@ def show_all_pokemons(request):
 
     pokemons = Pokemon.objects.all().only("image", "id", "title_ru")
     for pokemon in pokemons:
-        pokemon_entities = pokemon.pokemon_entity.only("lat", "lon")
+        pokemon_entities = pokemon.entities.only("lat", "lon")
         for entity in pokemon_entities:
             add_pokemon(
                 folium_map,
@@ -68,7 +68,7 @@ def show_pokemon(request, pokemon_id):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
-    pokemon_entities = requested_pokemon.pokemon_entity.only("lat", "lon")
+    pokemon_entities = requested_pokemon.entities.only("lat", "lon")
     for entity in pokemon_entities:
         add_pokemon(
             folium_map,
