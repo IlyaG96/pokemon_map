@@ -3,7 +3,6 @@ from .models import Pokemon, PokemonEntity
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 
-
 MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = (
     "https://vignette.wikia.nocookie.net/pokemon/images/6/6e/%21.png/revision"
@@ -32,7 +31,6 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 
 def show_all_pokemons(request):
-
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
     pokemons = Pokemon.objects.all().only("image", "id", "title_ru")
@@ -40,19 +38,20 @@ def show_all_pokemons(request):
         pokemon_entities = pokemon.pokemon_entity.only("lat", "lon")
         for entity in pokemon_entities:
             add_pokemon(
-                    folium_map,
-                    entity.lat,
-                    entity.lon,
-                    make_abs_uri(request, pokemon)
-                )
+                folium_map,
+                entity.lat,
+                entity.lon,
+                make_abs_uri(request, pokemon)
+            )
 
-    pokemons_on_page = []
-    for pokemon in pokemons:
-        pokemons_on_page.append({
+    pokemons_on_page = [
+        {
             "pokemon_id": pokemon.id,
             "img_url": make_abs_uri(request, pokemon),
-            "title_ru": pokemon.title_ru,
-        })
+            "title_ru": pokemon.title_ru
+        }
+        for pokemon in pokemons
+    ]
 
     return render(request, "mainpage.html", context={
         "map": folium_map._repr_html_(),
@@ -61,7 +60,6 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-
     pokemons = Pokemon.objects.all()
     try:
         requested_pokemon = pokemons.get(id=pokemon_id)
@@ -100,7 +98,7 @@ def show_pokemon(request, pokemon_id):
     next_evolution = requested_pokemon.next_evolution.all()
 
     if next_evolution:
-        next_evolution = next_evolution[0]
+        next_evolution = next_evolution.first()
         pokemon["next_evolution"] = {
             "title_ru": next_evolution.title_ru,
             "pokemon_id": next_evolution.id,
